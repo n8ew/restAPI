@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import status
 from users.models import User
 from . serializers import UserSerializer
 import requests
@@ -26,8 +27,14 @@ def create_user(request):
         header = {"Content-Type": "application/json; charset=utf-8"}
         response = requests.get(url, auth=basic, headers=header)
         fixed = response.content.decode()
-        if json.loads(fixed)[0]["emailAddress"]:
-            if serializer.is_valid():
-                serializer.save()
-        return Response(serializer.data)
-
+        try:
+            if json.loads(fixed)[0]["emailAddress"]:
+                if serializer.is_valid():
+                    serializer.save()
+                    res_data = {"success": "true", "msg": "success"}
+                    return Response(res_data, status=status.HTTP_201_CREATED)
+        except IndexError:
+            res_data = {"success": "false", "msg": "user not found"}
+            return Response(res_data, status=status.HTTP_404_NOT_FOUND)
+    res_data = {"success": "false", "msg": "bad request"}
+    return Response(res_data, status=status.HTTP_400_BAD_REQUEST)
