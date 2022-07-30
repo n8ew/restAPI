@@ -49,10 +49,12 @@ def create_issue(request):
         description = serializer.validated_data['description']
         issuetype = serializer.validated_data['issuetype']
         users = User.objects.all()
-        users_list = list(users)
-        for i in users_list:
+
+        for i in users:
+            print(i.email)
             if i.email == email:
                 my_user = i
+                print(my_user)
                 data_to_send = {
                     "fields": {
                         "project": {
@@ -73,6 +75,4 @@ def create_issue(request):
                 fixed = response.content.decode()
                 print(fixed)
                 return Response("done")
-
-            return Response('nope')
-    return Response("hi")
+    return Response("nope")
