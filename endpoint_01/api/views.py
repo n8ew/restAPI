@@ -38,3 +38,8 @@ def create_user(request):
             return Response(res_data, status=status.HTTP_404_NOT_FOUND)
     res_data = {"success": "false", "msg": "bad request"}
     return Response(res_data, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def create_issue(request):
+    pass
