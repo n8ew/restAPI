@@ -48,7 +48,6 @@ def create_issue(request):
         summary = serializer.validated_data['summary']
         description = serializer.validated_data['description']
         issuetype = serializer.validated_data['issuetype']
-        print(issuetype)
         users = User.objects.all()
         users_list = list(users)
         for i in users_list:
