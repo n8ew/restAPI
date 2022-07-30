@@ -51,20 +51,18 @@ def create_issue(request):
         users = User.objects.all()
 
         for i in users:
-            print(i.email)
             if i.email == email:
                 my_user = i
-                print(my_user)
                 data_to_send = {
                     "fields": {
                         "project": {
                             "key": "TES"
                         },
-                            "summary": summary,
-                            "description": description,
-                            "issuetype": {
-                                "name": issuetype
-                            }
+                        "summary": summary,
+                        "description": description,
+                        "issuetype": {
+                            "name": issuetype
+                        }
 
                     }
                 }
