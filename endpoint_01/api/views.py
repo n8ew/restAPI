@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from users.models import User
-from . serializers import UserSerializer
+from . serializers import UserSerializer, IssuesSerializer
 import requests
 from requests.auth import HTTPBasicAuth
 import json
@@ -42,4 +42,38 @@ def create_user(request):
 
 @api_view(['POST'])
 def create_issue(request):
-    pass
+    serializer = IssuesSerializer(data=request.data)
+    if serializer.is_valid():
+        email = serializer.validated_data['email']
+        summary = serializer.validated_data['summary']
+        description = serializer.validated_data['description']
+        issuetype = serializer.validated_data['issuetype']
+        print(issuetype)
+        users = User.objects.all()
+        users_list = list(users)
+        for i in users_list:
+            if i.email == email:
+                my_user = i
+                data_to_send = {
+                    "fields": {
+                        "project": {
+                            "key": "TES"
+                        },
+                            "summary": summary,
+                            "description": description,
+                            "issuetype": {
+                                "name": issuetype
+                            }
+
+                    }
+                }
+                url = f"https://fundacja997.atlassian.net/rest/api/2/issue/"
+                basic = HTTPBasicAuth(my_user.email, my_user.key)
+                header = {"Content-Type": "application/json; charset=utf-8"}
+                response = requests.post(url, data=json.dumps(data_to_send), auth=basic, headers=header)
+                fixed = response.content.decode()
+                print(fixed)
+                return Response("done")
+
+            return Response('nope')
+    return Response("hi")
